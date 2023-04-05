@@ -13,7 +13,7 @@
         <link href="css/custom.css" rel="stylesheet" />
         <link href="css/xterm.css" rel="stylesheet" />
     </head>
-    <body class="d-flex flex-column h-100">
+    <body class="d-flex flex-column h-100" style="align-items: center;">
          <!-- Modal for flashiing status-->
         <div class="container" id="mainContainer">
 
@@ -85,7 +85,7 @@
             </div>
         </div>
 
-    <div id="main">
+         <div id="main">
         <!-- Responsive navbar-->
         <nav class="navbar navbar-expand-lg">
             <div class="container">
@@ -93,12 +93,12 @@
                     <img src="assets/logo-v1.png" class="logo" />
                 </h4>
                 <!-- <span>A serial flasher utility for Espressif chips</span> -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item active" data-role="nav-menu-tab" data-target-tab-panel-id="quickstart">
+                <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button> -->
+                <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent"> -->
+                    <!-- <ul class="navbar-nav ms-auto mb-2 mb-lg-0"> -->
+                        <!-- <li class="nav-item active" data-role="nav-menu-tab" data>
                             <button class="nav-link icon-button">
-                                <img src="assets/icons/quickstart.png" class="icon" />
+                            png" class="icon" />
                                 <span>Quick Start</span>
                             </button>
                         </li>
@@ -109,19 +109,19 @@
                                 <span>DIY</span>
                             </button>
                         </li>
-                        
-                        <li class="nav-item">
-                            <button class="nav-link icon-button" id="connectButton">
+                         -->
+                        <!-- <li class="nav-item"> -->
+                            <!-- <button class="nav-link icon-button" id="connectButton" style="display: none;">
                                 <img src="assets/icons/connect.png" class="icon" />
                                 <span>Connect</span>
-                            </button>
-                            <button class="nav-link icon-button" id="disconnectButton">
+                            </button> -->
+                            <!-- <button class="nav-link icon-button" id="disconnectButton">
                                 <img src="assets/icons/disconnect.png" class="icon" />
                                 <span>Disconnect</span>
-                            </button>
-                        </li>
+                            </button> -->
+                        <!-- </li> -->
                         
-                        <li class="nav-item" data-role="nav-menu-tab" data-target-tab-panel-id="console">
+                        <!-- <li class="nav-item" data-role="nav-menu-tab" data-target-tab-panel-id="console">
                             <button class="nav-link icon-button" id="v-pills-console-tab">
                                 <img src="assets/icons/console.png" class="icon" />
                                 <span>Console</span>
@@ -140,13 +140,13 @@
                                 <img src="assets/icons/about-us.png" class="icon" />
                                 <span>About</span>
                             </button>
-                        </li>
-                    </ul>
-                </div>
+                        </li> -->
+                    <!-- </ul> -->
+                <!-- </div> -->
             </div>
         </nav>
         <!-- Page content-->
-        <div class="container" id="alert-container">
+        <!-- <div class="container" id="alert-container">
             <div class="text-center mt-3 intro-text">
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                     <label style="display:none" id="lblConnTo"><b>Connected to device: </b></label>
@@ -157,10 +157,9 @@
 
                 </div>
             </div>
-        </div>
-
+        </div> -->
         <!-- Quick start tab content - start -->
-        <div class="container tabs-section main-page-tab-panel" data-tab-panel-id="quickstart">
+        <div class="container tabs-section main-page-tab-panel">
             <h5 class="pt-4 pb-2 lh-lg"><span id="qtLabel">Choose from some of ESP's pre-built, out-of-the-box examples to flash and play</span></h5>
             <div class="form">
                 <div class="field-container">
@@ -269,21 +268,6 @@
         </div>
         <!-- DIY tab content - end -->
 
-        <!-- Console tab content - start -->    
-        <div class="container main-page-tab-panel" data-tab-panel-id="console">
-            <div class="row">
-                <div class="col-xs-12 ">
-                    <div class="button-container text-end mb-sm-3">
-                        <button type="button" class="app-button btn btn-outline-dark" id="consoleStartButton" data-toggle="tooltip"
-                        data-placement="right" title="Reset your device" disabled
-                        >Reset Device</button>
-                    </div>
-                    <div id="terminal"></div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Console tab content - end -->
         
         <!-- Settings tab content - start -->
         <div class="container main-page-tab-panel" data-tab-panel-id="settings">
@@ -394,8 +378,54 @@
             </div>
         </div>
         <!-- About us tab content - end -->
-    </div>
-    
+         </div>
+                <!-- Console tab content - start --> 
+                <div class="container">
+                    <div class="row split">
+                      <div class="col" id="col1">
+                          <div id="EZCMessege" style="display: none;"></div>
+                      </div>
+                      <div class="col-12" style="overflow: hidden;" id="col2">
+
+                          <div class="main-page-tab-panel" data-tab-panel-id="console" id="console">
+                              <!-- <div class="row"> -->
+                                  <!-- <div class="col-xs-12 "> -->
+                                      <div class="button-container text-end mb-sm-3">
+                                          <button type="button" class="app-button btn btn-outline-dark" id="consoleStartButton" data-toggle="tooltip"
+                                          data-placement="right" title="Reset your device" disabled
+                                          >Reset Device</button>
+                                      </div>
+                                      <div id="terminal"></div>
+                                  <!-- </div> -->
+                              <!-- </div> -->
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                <!-- <div class="split">
+                    
+
+                </div>    -->
+                
+                <!-- Console tab content - end -->
+         <div style="margin-top: auto;">
+        <button type="button" class="btn btn-primary btn-lg" id="connectButton">Connect Your Device</button>
+         </div>
+         <div id="spinner" style="display: none;">
+            <!-- <b style="color: firebrick;">Please wait we are making console ready for you...</b> -->
+            <div>
+
+                <div class="spinner-grow text-secondary bg-opacity-25" role="status" >
+                   <span class="sr-only"></span>
+                 </div>
+                <div class="spinner-grow text-secondary bg-opacity-50" role="status" >
+                   <span class="sr-only"></span>
+                 </div>
+                <div class="spinner-grow text-secondary bg-opacity-75" role="status" >
+                   <span class="sr-only"></span>
+                 </div>
+            </div>
+         </div>
     <!-- Safari & FireFox not supported error message-->
     <div id="unsupportedBrowserErr" style="display:none"><p align="center" style="color:red">
         This tool is not supported on Safari & Firefox browsers yet! Please try using another browser like Google Chrome.
@@ -409,7 +439,7 @@
 
         <footer class="container footer mt-auto py-3 bg-light">
             <div class="container text-center">
-                <span class="text-muted">Copyright © 2022 Espressif Systems</span>
+                <span class="text-muted">Copyright © 2023 Espressif Systems</span>
             </div>
         </footer>
         <!-- Third party libraries-->
@@ -419,6 +449,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.js"></script>
         <script type="text/javascript" src="node_modules/toml-js/src/toml.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
 
         <script src="js/index.js" type="module"></script>
         <!-- Bootstrap core JS-->

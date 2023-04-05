@@ -3480,7 +3480,8 @@ textarea.form-control-lg {
   box-shadow: 0 0 0 0.25rem rgba(33, 37, 41, 0.5);
 }
 .btn-outline-dark:disabled, .btn-outline-dark.disabled {
-  color: #212529;
+  color: #C8C8C8;
+  border-color:#C8C8C8 ;
   background-color: transparent;
 }
 
@@ -4062,7 +4063,7 @@ textarea.form-control-lg {
   display: flex;
   flex-wrap: inherit;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 }
 .navbar-brand {
   padding-top: 0.3125rem;
@@ -5513,10 +5514,9 @@ textarea.form-control-lg {
   transition: transform 0.3s ease-out;
   transform: translate(0, -50px);
 }
-.footer{
-  position: fixed;
-  bottom: 0;
-}
+/* .footer{
+  margin-top: 10px;
+} */
 @media (prefers-reduced-motion: reduce) {
   .modal.fade .modal-dialog {
     transition: none;
