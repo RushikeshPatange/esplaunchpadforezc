@@ -1,12 +1,12 @@
-const baudrates = document.getElementById("baudrates");
+// const baudrates = document.getElementById("baudrates");
 const connectButton = document.getElementById("connectButton");
-const disconnectButton = document.getElementById("disconnectButton");
+// const disconnectButton = document.getElementById("disconnectButton");
 const resetButton = document.getElementById("resetButton");
 const consoleStartButton = document.getElementById("consoleStartButton");
 const resetMessage = document.getElementById("resetMessage");
-const eraseButton = document.getElementById("eraseButton");
-const programButton = document.getElementById("programButton");
-const filesDiv = document.getElementById("files");
+// const eraseButton = document.getElementById("eraseButton");
+// const programButton = document.getElementById("programButton");
+// const filesDiv = document.getElementById("files");
 const terminal = document.getElementById("terminal");
 const ensureConnect = document.getElementById("ensureConnect");
 const lblConnTo = document.getElementById("lblConnTo");
@@ -52,11 +52,92 @@ let connected = false;
 let ios_app_url = "";
 let android_app_url = "";
 
-disconnectButton.style.display = "none";
+// disconnectButton.style.display = "none";
 eraseButton.style.display = "none";
 var config = [];
 var isDefault = true;
 
+// Code for ESPLaunchpad to work it for EZC
+const consolePage = document.getElementById("console")
+const spinner = document.getElementById("spinner")
+const col1 = document.getElementById("col1")
+const col2 = document.getElementById("col2")
+let partsArray = undefined
+let addressesArray = undefined
+function build_DIY_UI(){
+ console.warn(config)
+  let application = "supported_apps"
+  let chipInConfToml = undefined
+  let imageString = undefined;
+  let addressString = undefined
+  console.log(chip)
+  if(chip !== "default" && config["multipart"]){
+    chipInConfToml = config["chip"]
+    console.log(chipInConfToml)
+  }
+   if(chip !=="default" && chipInConfToml !== undefined && chipInConfToml === chip.toLowerCase()){
+     imageString = "image." + chipInConfToml.toLowerCase() + ".parts"
+     addressString = "image." + chipInConfToml.toLowerCase() + ".addresses"
+   }
+   console.warn(config[application][0])
+   partsArray = config[config[application][0]][imageString]
+   addressesArray = config[config[application][0]][addressString]
+}
+async function downloadAndFlashForEZC(){
+    let fileArr = []
+    console.log(partsArray)
+    for (let index = 0; index < partsArray.length; index ++) {
+    
+        let data = await new Promise(resolve => {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', partsArray[index], true);
+            xhr.responseType = "blob";
+            xhr.send();
+            xhr.onload = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var blob = new Blob([xhr.response], {type: "application/octet-stream"});
+                    var reader = new FileReader();
+                    reader.onload = (function(theFile) {
+                        return function(e) {
+                            resolve(e.target.result);
+                        };
+                    })(blob);
+                    reader.readAsBinaryString(blob);
+                } else {
+                    resolve(undefined);
+                }
+            };
+            xhr.onerror = function() {
+                resolve(undefined);
+            }
+        });
+        fileArr.push({data:data, address:addressesArray[index]});
+    }
+    $('#console').click();
+    try {
+       await esploader.write_flash(fileArr,'keep');
+       esploader.status = "complete"
+    } catch (error) {
+  }}
+function MDtoHtmlForEZC(){
+let application = "supported_apps"
+ console.warn(config[config[application][0]]["readme.text"])
+const EZCMessage = document.getElementById("EZCMessege")
+var converter = new showdown.Converter({tables: true})
+converter.setFlavor('github');
+// $("#EZCConfirmation").click()
+try {
+fetch(config[config[application][0]]["readme.text"]).then(response =>{
+    return response.text()
+}).then(result=>{
+let htmlText = converter.makeHtml( result);
+EZCMessage.innerHTML = htmlText
+EZCMessage.style.display = "block"  
+})
+} catch (error) {    
+ console.warn(error)
+}
+}
 // Build the Quick Try UI using the config toml file. If external path is not specified, pick up the default config
 async function buildQuickTryUI() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -71,11 +152,15 @@ async function buildQuickTryUI() {
             tomlFileURL = window.location.origin + window.location.pathname + "config/rainmaker_config.toml";
     }
     else {
-        var externalURL = urlParams.get('flashConfigURL');
-        if(externalURL){
-            tomlFileURL = externalURL;
-            isDefault = false;
+        const url = window.location.search
+        const parameter = "flashConfigURL"
+         if(url.includes("&")){
+             tomlFileURL = url.substring(url.search(parameter)+parameter.length+1)
+         }else
+        {
+             tomlFileURL = urlParams.get(parameter);
         }
+            isDefault = false;
     }
     var xhr = new XMLHttpRequest();
     xhr.open('GET', tomlFileURL, true);
@@ -244,15 +329,20 @@ let espLoaderTerminal = {
 }
 
 async function connectToDevice() {
+    connectButton.style.display = "none"
     if (device === null) {
+        console.warn("Inside connetcTodeviice")
         device = await navigator.serial.requestPort({
             filters: usbPortFilters
         });
         transport = new Transport(device);
     }
+    spinner.style.display = "flex"
+    spinner.style.flexDirection = "column"
+    spinner.style.alignItems = "center"
 
     try {
-        esploader = new ESPLoader(transport, baudrates.value, espLoaderTerminal);
+        esploader = new ESPLoader(transport, "921600", espLoaderTerminal);
         connected = true;
 
         chipDesc = await esploader.main_fn();
@@ -261,7 +351,7 @@ async function connectToDevice() {
         await esploader.flash_id();
     } catch(e) {
     }
-
+    spinner.style.display = "none"
 }
 
 function postConnectControls() {
@@ -283,13 +373,37 @@ function postConnectControls() {
     filesDiv.style.display = "initial";
     $('input:radio[id="radio-' + chip + '"]').attr('checked', true);
 }
-
 connectButton.onclick = async () => {
-    if(!connected)
+    try {
+     if(!connected)
         await connectToDevice();
 
-    console.log("Settings done for :" + chip);
-    postConnectControls();
+        console.log("Settings done for :" + chip);
+        consolePage.classList.remove("main-page-tab-panel")
+        consolePage.classList.add("fade-in")
+        col2.classList.remove("col")
+        col2.classList.add("col-12")
+        build_DIY_UI()
+        // postConnectControls();
+        await downloadAndFlashForEZC()
+        consoleStartButton.disabled = false
+        // consoleStartButton.click()  
+        MDtoHtmlForEZC()
+        col1.classList.remove("col")
+        col1.classList.add("col-6")
+        col1.classList.add("fadeInUp")
+        col2.classList.remove("col-12")
+        col2.classList.add("slide-right")
+        col2.classList.add("col-6")
+
+    } catch (error) {
+        console.log( error.message)
+        if(error.message === "Failed to execute 'requestPort' on 'Serial': No port selected by the user."){
+            
+            connectButton.style.display = "initial"
+            console.log(error)
+        }
+    }
 
 }
 
@@ -364,27 +478,27 @@ function cleanUp() {
     chip = null;
 }
 
-disconnectButton.onclick = async () => {
-    if(transport)
-        await transport.disconnect();
+// disconnectButton.onclick = async () => {
+//     if(transport)
+//         await transport.disconnect();
 
-    term.clear();
-    transport = null;
-    connected = false;
-    $("#baudrates").prop("disabled", false);
-    $("#flashButton").prop("disabled", true);
-    $("#flashWrapper").tooltip().attr('data-bs-original-title', "Click on 'Connect' button in top Menu");
-    $("#programButton").prop("disabled", true);
-    $("#consoleStartButton").prop("disabled", true);
-    settingsWarning.style.display = "none";
-    connectButton.style.display = "initial";
-    disconnectButton.style.display = "none";
-    eraseButton.style.display = "none";
-    lblConnTo.style.display = "none";
-    alertDiv.style.display = "none";
-    ensureConnect.style.display = "initial";
-    cleanUp();
-};
+//     term.clear();
+//     transport = null;
+//     connected = false;
+//     $("#baudrates").prop("disabled", false);
+//     $("#flashButton").prop("disabled", true);
+//     $("#flashWrapper").tooltip().attr('data-bs-original-title', "Click on 'Connect' button in top Menu");
+//     $("#programButton").prop("disabled", true);
+//     $("#consoleStartButton").prop("disabled", true);
+//     settingsWarning.style.display = "none";
+//     connectButton.style.display = "initial";
+//     disconnectButton.style.display = "none";
+//     eraseButton.style.display = "none";
+//     lblConnTo.style.display = "none";
+//     alertDiv.style.display = "none";
+//     ensureConnect.style.display = "initial";
+//     cleanUp();
+// };
 
 consoleStartButton.onclick = async () => {
     if (device === null) {
@@ -396,7 +510,6 @@ consoleStartButton.onclick = async () => {
     //resetMessage.style.display = "block";
     //consoleStartButton.style.display = "none";
     $('#resetConfirmation').click();
-
     await transport.disconnect();
     await transport.connect();
 
